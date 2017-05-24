@@ -23,7 +23,7 @@ setup(
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
-    packages=['hesong.ipsc.busnetcli', 'hesong.ipsc.busnetcli._c'],
+    packages=find_packages('src', exclude=['tests', 'docs']),
     package_dir={'': 'src'},  # tell distutils packages are under src
     # The project's main homepage.
     # url='https://github.com/Hesong-OpenSource/smartbus-client-python',
@@ -35,8 +35,8 @@ setup(
     # Choose your license
     license='MIT',
 
-    # Requires-Python version.
-    python_requires='>=3.3',
+    # What does your project relate to?
+    # keywords='key1 key2 key3',
 
     install_requires=[
         'enum34;python_version<"3.4"',
