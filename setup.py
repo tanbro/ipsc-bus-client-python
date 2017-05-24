@@ -23,7 +23,7 @@ setup(
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
-    packages=['hesong.ipsc.busnetcli'],
+    packages=['hesong.ipsc.busnetcli', 'hesong.ipsc.busnetcli._c'],
     package_dir={'': 'src'},  # tell distutils packages are under src
     # The project's main homepage.
     # url='https://github.com/Hesong-OpenSource/smartbus-client-python',
