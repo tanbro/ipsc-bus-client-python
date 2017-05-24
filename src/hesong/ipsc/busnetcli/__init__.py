@@ -8,4 +8,10 @@
 :author: 刘雪彦
 """
 
+from __future__ import absolute_import
+
+from .client import Client
+
 __version__ = '3.0'
+
+__all__ = ['Client']
