@@ -38,8 +38,11 @@ setup(
     # What does your project relate to?
     # keywords='key1 key2 key3',
 
+    install_requires=[
+        'enum34;python_version<"3.4"',
+        'futures;python_version<"3.2"'
+    ],
     extras_require={
-        ':python_version<"3.2"': ['futures'],
         'dev': ['setuptools',
                 'wheel',
                 'twine',
