@@ -20,6 +20,7 @@ setup(
 
     description='Python wrapper for IPSC CTI Service\'s Smartbus client',
     long_description=long_description,
+    zip_safe=False,
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
