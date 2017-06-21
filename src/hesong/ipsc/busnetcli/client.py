@@ -14,6 +14,7 @@ from ._c.netapi import *
 from .errors import check
 from .head import *
 from .utils import *
+from .version import *
 
 __all__ = ['Client']
 
@@ -63,7 +64,13 @@ class Client(LoggerMixin):
         self._slave_port = int(slave_port or 0xffff)
         self._user = user if user is None else str(user)
         self._password = password if password is None else str(password)
-        self._info = info if info is None else str(info)
+        info = '' if info is None else str(info)
+        if not info:
+            try:
+                info = '{} {}'.format(self.__class__.__qualname__, __version__)
+            except AttributeError:
+                info = '{} {}'.format(self.__class__.__name__, __version__)
+        self._info = info
 
     @classmethod
     def initialize(cls, unit_id, global_connect_callback=None, lib_path=''):
