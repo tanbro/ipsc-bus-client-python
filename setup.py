@@ -15,7 +15,7 @@ def read(*names, **kwargs):
 
 
 version = {}
-exec(read('src/hesohng/ipsc/busnetcli/version.py'), version)
+exec(read('src/hesong/ipsc/busnetcli/version.py'), version)
 __version__ = version['__version__']
 
 setup(
@@ -35,7 +35,7 @@ setup(
     packages=find_packages('src', exclude=['tests', 'docs']),
     package_dir={'': 'src'},  # tell distutils packages are under src
     # The project's main homepage.
-    url='https://bitbucket.org/hesong-opensource/ipsc-bus-client',
+    url='http://bitbucket.org/hesong-opensource/ipsc-bus-client',
 
     # Author details
     author='Liu Xue Yan',
@@ -44,9 +44,13 @@ setup(
     # Choose your license
     license='MIT',
 
-    # What does your project relate to?
-    # keywords='key1 key2 key3',
-
+    # requirements files see:
+    # https://packaging.python.org/en/latest/technical.html#install-requires-vs-requirements-files
+    setup_requires=[
+        'setuptools',
+        'sphinx',
+        'recommonmark',
+    ],
     install_requires=[
         'enum34;python_version<"3.4"',
         'futures;python_version<"3.2"'

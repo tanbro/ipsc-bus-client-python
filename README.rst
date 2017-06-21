@@ -55,4 +55,4 @@ offline install
 
 .. _Python: http://www.python.org/
 .. _pip: http://pip.pypa.io/
-.. _ipsc-bus-client https://bitbucket.org/hesong-opensource/ipsc-bus-client
+.. _ipsc-bus-client: http://bitbucket.org/hesong-opensource/ipsc-bus-client
