@@ -94,8 +94,6 @@ class Client(LoggerMixin):
             :param int access_unit_id: 连接点的UnitID
             :param int status_code: 连接状态码： 0 断开连接、1 新建连接、2 已有的连接
             :param str info: 连接附加信息
-
-
         """
         # Load DLL/SO
         logger = cls.get_logger()
