@@ -15,7 +15,7 @@ def read(*names, **kwargs):
 
 
 version = {}
-exec(read('src/hesong/plum/server/version.py'), version)
+exec(read('src/hesohng/ipsc/busnetcli/version.py'), version)
 __version__ = version['__version__']
 
 setup(
