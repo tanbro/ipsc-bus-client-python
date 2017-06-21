@@ -6,14 +6,15 @@
 
 from __future__ import absolute_import
 
+import json
 from ctypes import CDLL, byref, create_string_buffer, string_at, c_void_p, c_char_p, c_int, c_byte, c_size_t
 from ctypes.util import find_library
-import json
 
 from ._c.netapi import *
 from .errors import check
 from .head import *
 from .utils import *
+from .version import *
 
 __all__ = ['Client']
 
@@ -63,7 +64,13 @@ class Client(LoggerMixin):
         self._slave_port = int(slave_port or 0xffff)
         self._user = user if user is None else str(user)
         self._password = password if password is None else str(password)
-        self._info = info if info is None else str(info)
+        info = '' if info is None else str(info)
+        if not info:
+            try:
+                info = '{} {}'.format(self.__class__.__qualname__, __version__)
+            except AttributeError:
+                info = '{} {}'.format(self.__class__.__name__, __version__)
+        self._info = info
 
     @classmethod
     def initialize(cls, unit_id, global_connect_callback=None, lib_path=''):
@@ -87,8 +94,6 @@ class Client(LoggerMixin):
             :param int access_unit_id: 连接点的UnitID
             :param int status_code: 连接状态码： 0 断开连接、1 新建连接、2 已有的连接
             :param str info: 连接附加信息
-
-
         """
         # Load DLL/SO
         logger = cls.get_logger()

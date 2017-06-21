@@ -11,6 +11,7 @@ def declare(funcs):
 
     Add the decorated :class:`CFunc` class into to-be-bind functions list
     """
+
     def wrapper(clz):
         if not clz.added:
             funcs.append(clz)
