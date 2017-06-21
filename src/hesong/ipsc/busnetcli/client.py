@@ -6,9 +6,9 @@
 
 from __future__ import absolute_import
 
+import json
 from ctypes import CDLL, byref, create_string_buffer, string_at, c_void_p, c_char_p, c_int, c_byte, c_size_t
 from ctypes.util import find_library
-import json
 
 from ._c.netapi import *
 from .errors import check

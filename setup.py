@@ -1,13 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import io
+import os.path
 
 from setuptools import setup, find_packages  # Always prefer setuptools over distutils
-import codecs  # To use a consistent encoding
-from os import path
 
-# Get the long description from the relevant file
-with codecs.open(path.join(path.abspath(path.dirname(__file__)), 'README.rst'), encoding='utf-8') as f:
-    long_description = f.read()
+
+def read(*names, **kwargs):
+    with io.open(
+            os.path.join(os.path.dirname(__file__), *names),
+            encoding=kwargs.get("encoding", "utf8")
+    ) as fp:
+        return fp.read()
+
+
+version = {}
+exec(read('src/hesong/plum/server/version.py'), version)
+__version__ = version['__version__']
 
 setup(
     name='hesong-ipsc-busnetcli',
@@ -16,17 +25,17 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/development.html#single-sourcing-the-version
-    version='3.0',
+    version=__version__,
 
-    description='Python wrapper for IPSC CTI Service\'s Smartbus client',
-    long_description=long_description,
+    description='Python wrapper for Hesong IPSC CTI Service data bus client',
+    long_description=read('README.rst'),
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
     packages=find_packages('src', exclude=['tests', 'docs']),
     package_dir={'': 'src'},  # tell distutils packages are under src
     # The project's main homepage.
-    # url='https://github.com/Hesong-OpenSource/smartbus-client-python',
+    url='https://bitbucket.org/hesong-opensource/ipsc-bus-client',
 
     # Author details
     author='Liu Xue Yan',
@@ -79,6 +88,7 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
 
     # List run-time dependencies here.  These will be installed by pip when your
