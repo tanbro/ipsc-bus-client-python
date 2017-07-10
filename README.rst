@@ -24,7 +24,7 @@ install ipsc-bus-client
 
     $ git clone https://bitbucket.org/hesong-opensource/ipsc-bus-client.git
     $ cd ipsc-bus-client
-    $ sudo cp -af include/*.h /usr/local/include
+    $ sudo cp -af inc/*.h /usr/local/include
     $ sudo unzip -d /usr/local/lib lib/{{Platform}}-{{Architecture}}/libbusnetcli.zip
     $ sudo ldconfig
 
