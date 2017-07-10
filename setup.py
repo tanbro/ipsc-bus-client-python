@@ -1,9 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import sys
 import io
 import os.path
 
-from setuptools import setup, find_packages  # Always prefer setuptools over distutils
+# Always prefer setuptools over distutils
+from setuptools import setup, find_packages
+
+
+python_version = '{0[0]}.{0[1]}'.format(sys.version_info)
 
 
 def read(*names, **kwargs):
@@ -17,6 +22,14 @@ def read(*names, **kwargs):
 version = {}
 exec(read('src/hesong/ipsc/busnetcli/version.py'), version)
 __version__ = version['__version__']
+
+
+install_requires = []
+if python_version < '3.4':
+    install_requires.append('enum34')
+elif python_version < '3.2':
+    install_requires.append('futures')
+
 
 setup(
     name='hesong-ipsc-busnetcli',
@@ -47,14 +60,8 @@ setup(
     # requirements files see:
     # https://packaging.python.org/en/latest/technical.html#install-requires-vs-requirements-files
     setup_requires=[
-        'setuptools',
-        'sphinx',
-        'recommonmark',
     ],
-    install_requires=[
-        'enum34;python_version<"3.4"',
-        'futures;python_version<"3.2"'
-    ],
+    install_requires=install_requires,
     extras_require={
         'dev': ['setuptools',
                 'wheel',
