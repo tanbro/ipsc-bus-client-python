@@ -7,14 +7,18 @@
 from __future__ import absolute_import
 
 import json
+import os.path
 from ctypes import CDLL, byref, create_string_buffer, string_at, c_void_p, c_char_p, c_int, c_byte, c_size_t
 from ctypes.util import find_library
+from platform import system, machine
 
+from pkg_resources import Requirement, resource_filename
+
+from . import version
 from ._c.netapi import *
 from .errors import check
 from .head import *
 from .utils import *
-from .version import *
 
 __all__ = ['Client']
 
@@ -67,9 +71,9 @@ class Client(LoggerMixin):
         info = '' if info is None else str(info)
         if not info:
             try:
-                info = '{} {}'.format(self.__class__.__qualname__, __version__)
+                info = '{} {}'.format(self.__class__.__qualname__, version.__version__)
             except AttributeError:
-                info = '{} {}'.format(self.__class__.__name__, __version__)
+                info = '{} {}'.format(self.__class__.__name__, version.__version__)
         self._info = info
 
     @classmethod
@@ -100,13 +104,32 @@ class Client(LoggerMixin):
         logger.info('initialize: >>> lib_path=%s', lib_path)
         if cls._lib:
             raise RuntimeError('Library already loaded')
-        if not lib_path:
-            logger.debug('initialize: find_library "%s"', DLL_NAME)
-            lib_path = find_library(DLL_NAME)
-            if not lib_path:
-                raise RuntimeError('Failed to find library {}'.format(DLL_NAME))
-        logger.debug('initialize: CDLL %s', lib_path)
-        cls._lib = CDLL(lib_path)
+        pack_name = '.'.join(version.__name__.split('.')[:-1])
+        _system = system()
+        _machine = machine()
+        if lib_path:
+            logger.debug('initialize: load from specified path: CDLL(%r)', lib_path)
+            cls._lib = CDLL(lib_path)
+        else:
+            if _system == 'Linux':
+                so_file_name = 'lib{}.so'.format(DLL_NAME)
+            elif _system == 'Windows':
+                so_file_name = '{}.dll'.format(DLL_NAME)
+            else:
+                raise NotImplementedError()
+            resource_name = os.path.join(
+                *pack_name.split('.'), 'data', 'library', _system, _machine, so_file_name
+            )
+            so_file_path = resource_filename(Requirement.parse('hesong-ipsc-busnetcli'), resource_name)
+            logger.debug('initialize: load from resource file: CDLL(%r)', so_file_path)
+            cls._lib = CDLL(so_file_path)
+            if not cls._lib:
+                logger.debug('initialize: load from system path: find_library "%s"', DLL_NAME)
+                lib_path = find_library(DLL_NAME)
+                if not lib_path:
+                    raise RuntimeError('Failed to find library {}'.format(DLL_NAME))
+                logger.debug('initialize: CDLL(%r)', lib_path)
+                cls._lib = CDLL(lib_path)
         if not cls._lib:
             raise RuntimeError('Failed to load library {}'.format(lib_path))
         logger.debug('initialize: %s', cls._lib)
