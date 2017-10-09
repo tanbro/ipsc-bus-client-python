@@ -7,7 +7,6 @@ import os.path
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
 
-
 python_version = '{0[0]}.{0[1]}'.format(sys.version_info)
 
 
@@ -59,11 +58,12 @@ setup(
 
     # requirements files see:
     # https://packaging.python.org/en/latest/technical.html#install-requires-vs-requirements-files
+    python_requires='>=2.7,!=3.0.*,!=3.1.*',
     setup_requires=[
     ],
     install_requires=install_requires,
     extras_require={
-        'dev': ['setuptools',
+        'develop': ['setuptools',
                 'wheel',
                 'twine',
                 'Sphinx',
@@ -72,6 +72,10 @@ setup(
                 'sphinx-pypi-upload',
                 'coverage'],
         'test': ['coverage']
+    },
+    # Included data files
+    package_data={
+        'libbusnetcli': ['../natives/libbusnetcli.so'],
     },
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
