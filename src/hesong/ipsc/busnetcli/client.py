@@ -12,7 +12,7 @@ from ctypes import CDLL, byref, create_string_buffer, string_at, c_void_p, c_cha
 from ctypes.util import find_library
 from platform import system, machine
 
-from pkg_resources import resource_filename
+from pkg_resources import Requirement, resource_filename
 
 from . import version
 from ._c.netapi import *
@@ -118,9 +118,9 @@ class Client(LoggerMixin):
             else:
                 raise NotImplementedError()
             resource_name = os.path.join(
-                '..', '..', '..', '..', 'natives', _system, _machine, so_file_name
+                *pack_name.split('.'), 'data', 'library', _system, _machine, so_file_name
             )
-            so_file_path = resource_filename(__name__, resource_name)
+            so_file_path = resource_filename(Requirement.parse('hesong-ipsc-busnetcli'), resource_name)
             logger.debug('initialize: load from resource file: CDLL(%r)', so_file_path)
             cls._lib = CDLL(so_file_path)
             if not cls._lib:
