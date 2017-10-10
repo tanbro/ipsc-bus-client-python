@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys
 import io
 import os.path
+import sys
 
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
@@ -22,13 +22,11 @@ version = {}
 exec(read('src/hesong/ipsc/busnetcli/version.py'), version)
 __version__ = version['__version__']
 
-
 install_requires = []
 if python_version < '3.4':
     install_requires.append('enum34')
 elif python_version < '3.2':
     install_requires.append('futures')
-
 
 setup(
     name='hesong-ipsc-busnetcli',
@@ -63,14 +61,16 @@ setup(
     ],
     install_requires=install_requires,
     extras_require={
-        'develop': ['setuptools',
-                'wheel',
-                'twine',
-                'Sphinx',
-                'recommonmark',
-                'sphinx-autobuild',
-                'sphinx-pypi-upload',
-                'coverage'],
+        'develop': [
+            'setuptools',
+            'wheel',
+            'twine',
+            'Sphinx',
+            'recommonmark',
+            'sphinx-autobuild',
+            'sphinx-pypi-upload',
+            'coverage'
+        ],
         'test': ['coverage']
     },
     # Included data files
