@@ -12,11 +12,7 @@ from ctypes import CDLL, byref, create_string_buffer, string_at, c_void_p, c_cha
 from ctypes.util import find_library
 from platform import system, machine
 
-try:
-    from pkg_resources import Requirement, resource_filename
-except ImportError:
-    Requirement = None
-    resource_filename = None
+from pkg_resources import Requirement, resource_filename, DistributionNotFound
 
 from . import version
 from ._c.netapi import *
@@ -105,7 +101,7 @@ class Client(LoggerMixin):
         """
         # Load DLL/SO
         logger = cls.get_logger()
-        logger.info('initialize: >>> lib_path=%s', lib_path)
+        logger.info('initialize: >>> lib_path=%r', lib_path)
         if cls._lib:
             raise RuntimeError('Library already loaded')
         pack_name = '.'.join(version.__name__.split('.')[:-1])
@@ -115,21 +111,21 @@ class Client(LoggerMixin):
             logger.debug('initialize: try loading library from specified path: CDLL(%r)', lib_path)
             cls._lib = CDLL(lib_path)
         else:
-            if resource_filename is None:
-                logger.warning('Can not import pkg_resources, so can not load library file from package data.')
+            if _system == 'Linux':
+                so_file_name = 'lib{}.so'.format(DLL_NAME)
+            elif _system == 'Windows':
+                so_file_name = '{}.dll'.format(DLL_NAME)
             else:
-                # if has pkg_resource, try load so/dll from package's data file
-                if _system == 'Linux':
-                    so_file_name = 'lib{}.so'.format(DLL_NAME)
-                elif _system == 'Windows':
-                    so_file_name = '{}.dll'.format(DLL_NAME)
-                else:
-                    raise NotImplementedError()
-                resource_name = os.path.join(
-                    os.sep.join(pack_name.split('.')),
-                    'data', 'library', _system, _machine, so_file_name
-                )
+                raise NotImplementedError()
+            resource_name = os.path.join(
+                os.sep.join(pack_name.split('.')),
+                'data', 'library', _system, _machine, so_file_name
+            )
+            try:
                 so_file_path = resource_filename(Requirement.parse('hesong-ipsc-busnetcli'), resource_name)
+            except DistributionNotFound as err:
+                logger.warning('%s', err)
+            else:
                 logger.debug('initialize: try loading library from package data: CDLL(%r)', so_file_path)
                 cls._lib = CDLL(so_file_path)
             if not cls._lib:
