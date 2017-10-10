@@ -112,7 +112,7 @@ class Client(LoggerMixin):
         _system = system()
         _machine = machine()
         if lib_path:
-            logger.debug('initialize: load from specified path: CDLL(%r)', lib_path)
+            logger.debug('initialize: load library from specified path: CDLL(%r)', lib_path)
             cls._lib = CDLL(lib_path)
         else:
             if resource_filename is not None:  # if has pkg_resource, try load so/dll from package's data file
@@ -123,18 +123,19 @@ class Client(LoggerMixin):
                 else:
                     raise NotImplementedError()
                 resource_name = os.path.join(
-                    *pack_name.split('.'), 'data', 'library', _system, _machine, so_file_name
+                    os.sep.join(pack_name.split('.')),
+                    'data', 'library', _system, _machine, so_file_name
                 )
                 so_file_path = resource_filename(Requirement.parse('hesong-ipsc-busnetcli'), resource_name)
-                logger.debug('initialize: load from resource file: CDLL(%r)', so_file_path)
+                logger.debug('initialize: load library from package data file: CDLL(%r)', so_file_path)
                 cls._lib = CDLL(so_file_path)
-                if not cls._lib:
-                    logger.debug('initialize: load from system path: find_library "%s"', DLL_NAME)
-                    lib_path = find_library(DLL_NAME)
-                    if not lib_path:
-                        raise RuntimeError('Failed to find library {}'.format(DLL_NAME))
-                    logger.debug('initialize: CDLL(%r)', lib_path)
-                    cls._lib = CDLL(lib_path)
+            if not cls._lib:
+                logger.debug('initialize: load library from system path: find_library(%r)', DLL_NAME)
+                lib_path = find_library(DLL_NAME)
+                if not lib_path:
+                    raise RuntimeError('Failed to find library {}'.format(DLL_NAME))
+                logger.debug('initialize: CDLL(%r)', lib_path)
+                cls._lib = CDLL(lib_path)
         if not cls._lib:
             raise RuntimeError('Failed to load library {}'.format(lib_path))
         logger.debug('initialize: %s', cls._lib)
