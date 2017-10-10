@@ -12,7 +12,11 @@ from ctypes import CDLL, byref, create_string_buffer, string_at, c_void_p, c_cha
 from ctypes.util import find_library
 from platform import system, machine
 
-from pkg_resources import Requirement, resource_filename
+try:
+    from pkg_resources import Requirement, resource_filename
+except ImportError:
+    Requirement = None
+    resource_filename = None
 
 from . import version
 from ._c.netapi import *
@@ -108,23 +112,28 @@ class Client(LoggerMixin):
         _system = system()
         _machine = machine()
         if lib_path:
-            logger.debug('initialize: load from specified path: CDLL(%r)', lib_path)
+            logger.debug('initialize: try loading library from specified path: CDLL(%r)', lib_path)
             cls._lib = CDLL(lib_path)
         else:
-            if _system == 'Linux':
-                so_file_name = 'lib{}.so'.format(DLL_NAME)
-            elif _system == 'Windows':
-                so_file_name = '{}.dll'.format(DLL_NAME)
+            if resource_filename is None:
+                logger.warning('Can not import pkg_resources, so can not load library file from package data.')
             else:
-                raise NotImplementedError()
-            resource_name = os.path.join(
-                *pack_name.split('.'), 'data', 'library', _system, _machine, so_file_name
-            )
-            so_file_path = resource_filename(Requirement.parse('hesong-ipsc-busnetcli'), resource_name)
-            logger.debug('initialize: load from resource file: CDLL(%r)', so_file_path)
-            cls._lib = CDLL(so_file_path)
+                # if has pkg_resource, try load so/dll from package's data file
+                if _system == 'Linux':
+                    so_file_name = 'lib{}.so'.format(DLL_NAME)
+                elif _system == 'Windows':
+                    so_file_name = '{}.dll'.format(DLL_NAME)
+                else:
+                    raise NotImplementedError()
+                resource_name = os.path.join(
+                    os.sep.join(pack_name.split('.')),
+                    'data', 'library', _system, _machine, so_file_name
+                )
+                so_file_path = resource_filename(Requirement.parse('hesong-ipsc-busnetcli'), resource_name)
+                logger.debug('initialize: try loading library from package data: CDLL(%r)', so_file_path)
+                cls._lib = CDLL(so_file_path)
             if not cls._lib:
-                logger.debug('initialize: load from system path: find_library "%s"', DLL_NAME)
+                logger.debug('initialize: try loading library from system path: find_library(%r)', DLL_NAME)
                 lib_path = find_library(DLL_NAME)
                 if not lib_path:
                     raise RuntimeError('Failed to find library {}'.format(DLL_NAME))
