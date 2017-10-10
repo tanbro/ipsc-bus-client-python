@@ -112,10 +112,13 @@ class Client(LoggerMixin):
         _system = system()
         _machine = machine()
         if lib_path:
-            logger.debug('initialize: load library from specified path: CDLL(%r)', lib_path)
+            logger.debug('initialize: try loading library from specified path: CDLL(%r)', lib_path)
             cls._lib = CDLL(lib_path)
         else:
-            if resource_filename is not None:  # if has pkg_resource, try load so/dll from package's data file
+            if resource_filename is None:
+                logger.warning('Can not import pkg_resources, so can not load library file from package data.')
+            else:
+                # if has pkg_resource, try load so/dll from package's data file
                 if _system == 'Linux':
                     so_file_name = 'lib{}.so'.format(DLL_NAME)
                 elif _system == 'Windows':
@@ -127,10 +130,10 @@ class Client(LoggerMixin):
                     'data', 'library', _system, _machine, so_file_name
                 )
                 so_file_path = resource_filename(Requirement.parse('hesong-ipsc-busnetcli'), resource_name)
-                logger.debug('initialize: load library from package data file: CDLL(%r)', so_file_path)
+                logger.debug('initialize: try loading library from package data: CDLL(%r)', so_file_path)
                 cls._lib = CDLL(so_file_path)
             if not cls._lib:
-                logger.debug('initialize: load library from system path: find_library(%r)', DLL_NAME)
+                logger.debug('initialize: try loading library from system path: find_library(%r)', DLL_NAME)
                 lib_path = find_library(DLL_NAME)
                 if not lib_path:
                     raise RuntimeError('Failed to find library {}'.format(DLL_NAME))
