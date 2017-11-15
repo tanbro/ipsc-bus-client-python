@@ -7,7 +7,7 @@ import sys
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
 
-python_version = '{0[0]}.{0[1]}'.format(sys.version_info)
+py_major_minor = '{0[0]}.{0[1]}'.format(sys.version_info)
 
 
 def read(*names, **kwargs):
@@ -22,11 +22,11 @@ version = {}
 exec(read('src/hesong/ipsc/busnetcli/version.py'), version)
 __version__ = version['__version__']
 
-install_requires = []
-if python_version < '3.4':
-    install_requires.append('enum34')
-elif python_version < '3.2':
-    install_requires.append('futures')
+INSTALL_REQUIRES = []
+if py_major_minor < '3.4':
+    INSTALL_REQUIRES.append('enum34')
+elif py_major_minor < '3.2':
+    INSTALL_REQUIRES.append('futures')
 
 setup(
     name='hesong-ipsc-busnetcli',
@@ -57,9 +57,16 @@ setup(
     # requirements files see:
     # https://packaging.python.org/en/latest/technical.html#install-requires-vs-requirements-files
     python_requires='>=2.7,!=3.0.*,!=3.1.*',
-    setup_requires=[
-    ],
-    install_requires=install_requires,
+    # use setuptools_scm
+    use_scm_version={
+        # guess-next-dev:	automatically guesses the next development version (default)
+        # post-release:	generates post release versions (adds postN)
+        'version_scheme': 'guess-next-dev',
+        'write_to': 'src/hesong/ipsc/busnetcli/_scm_version.py',
+    },
+    setup_requires=['setuptools_scm', 'setuptools_scm_git_archive'],
+
+    install_requires=INSTALL_REQUIRES,
     extras_require={
         'develop': [
             'setuptools',
@@ -75,7 +82,7 @@ setup(
     },
     # Included data files
     package_data={
-        '': ['data/library/*/*/*.so'],
+        '': ['data/library/*/*/*'],
     },
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers

@@ -12,4 +12,6 @@ from __future__ import absolute_import
 
 from .client import Client
 
-__all__ = ['Client']
+__all__ = ['Client', '__version__']
+
+from .version import __version__

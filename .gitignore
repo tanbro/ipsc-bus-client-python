@@ -300,3 +300,7 @@ local.properties
 # !.vscode/tasks.json
 # !.vscode/launch.json
 # !.vscode/extensions.json
+
+
+# setuptools scm_version
+src/hesong/ipsc/busnetcli/_scm_version.py
