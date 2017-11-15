@@ -4,8 +4,9 @@
 
 :date: 2013-6-8
 :author: lxy@hesong.ent
-
 """
+
+from __future__ import absolute_import
 
 from ._c.mutual import SMARTBUS_ERR_OK, SMARTBUS_ERR_ARGUMENT, SMARTBUS_ERR_CONN_NOT_ESTAB, SMARTBUS_ERR_CONNECT_BREAK, \
     SMARTBUS_ERR_AUTHOR, SMARTBUS_ERR_USER, SMARTBUS_ERR_PWD, SMARTBUS_ERR_BUFF_FULL, SMARTBUS_ERR_NODE_NOTEXIST, \
@@ -74,7 +75,8 @@ class SmartBusError(Exception):
     """
 
     def __init__(self, code, message):
-        super(Exception, self).__init__(self, 'smartbus wrong API return code[{}]: "{}".'.format(code, message))
+        super(Exception, self).__init__(
+            self, 'smartbus wrong API return code[{}]: "{}".'.format(code, message))
         self._code = code
         self._message = message
 
