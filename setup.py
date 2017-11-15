@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+"""
+setuptools script
+"""
+
+from __future__ import with_statement
+
 import io
 import os.path
 import sys
@@ -7,35 +14,29 @@ import sys
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
 
-python_version = '{0[0]}.{0[1]}'.format(sys.version_info)
+PY_MAJOR_MINOR = '{0[0]}.{0[1]}'.format(sys.version_info)
 
 
 def read(*names, **kwargs):
+    """
+    read out a text file
+    """
     with io.open(
-            os.path.join(os.path.dirname(__file__), *names),
-            encoding=kwargs.get("encoding", "utf8")
-    ) as fp:
-        return fp.read()
+        os.path.join(os.path.dirname(__file__), *names),
+        encoding=kwargs.get('encoding', 'utf8')
+    ) as stream:
+        return stream.read()
 
 
-version = {}
-exec(read('src/hesong/ipsc/busnetcli/version.py'), version)
-__version__ = version['__version__']
-
-install_requires = []
-if python_version < '3.4':
-    install_requires.append('enum34')
-elif python_version < '3.2':
-    install_requires.append('futures')
+INSTALL_REQUIRES = []
+if PY_MAJOR_MINOR < '3.4':
+    INSTALL_REQUIRES.append('enum34')
+elif PY_MAJOR_MINOR < '3.2':
+    INSTALL_REQUIRES.append('futures')
 
 setup(
     name='hesong-ipsc-busnetcli',
     namespace_packages=['hesong', 'hesong.ipsc'],
-
-    # Versions should comply with PEP440.  For a discussion on single-sourcing
-    # the version across setup.py and the project code, see
-    # https://packaging.python.org/en/latest/development.html#single-sourcing-the-version
-    version=__version__,
 
     description='Python wrapper for Hesong IPSC CTI Service data bus client',
     long_description=read('README.rst'),
@@ -45,7 +46,7 @@ setup(
     packages=find_packages('src', exclude=['tests', 'docs']),
     package_dir={'': 'src'},  # tell distutils packages are under src
     # The project's main homepage.
-    url='http://bitbucket.org/hesong-opensource/ipsc-bus-client',
+    url='https://bitbucket.org/hesong-opensource/ipsc-bus-client-python',
 
     # Author details
     author='Liu Xue Yan',
@@ -57,9 +58,16 @@ setup(
     # requirements files see:
     # https://packaging.python.org/en/latest/technical.html#install-requires-vs-requirements-files
     python_requires='>=2.7,!=3.0.*,!=3.1.*',
-    setup_requires=[
-    ],
-    install_requires=install_requires,
+    # use setuptools_scm
+    use_scm_version={
+        # guess-next-dev:	automatically guesses the next development version (default)
+        # post-release:	generates post release versions (adds postN)
+        'version_scheme': 'guess-next-dev',
+        'write_to': 'src/hesong/ipsc/busnetcli/_scm_version.py',
+    },
+    setup_requires=['setuptools_scm', 'setuptools_scm_git_archive'],
+
+    install_requires=INSTALL_REQUIRES,
     extras_require={
         'develop': [
             'setuptools',
@@ -67,6 +75,7 @@ setup(
             'twine',
             'Sphinx',
             'recommonmark',
+            'sphinx-rtd-theme',
             'sphinx-autobuild',
             'sphinx-pypi-upload',
             'coverage'
@@ -75,7 +84,7 @@ setup(
     },
     # Included data files
     package_data={
-        '': ['data/library/*/*/*.so'],
+        '': ['data/library/*/*/*'],
     },
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -104,5 +113,6 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
 )
