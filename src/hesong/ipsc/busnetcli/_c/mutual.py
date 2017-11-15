@@ -4,6 +4,8 @@
 Smartbus C-API IPC 与 NET 客户端的共用部分
 """
 
+from __future__ import absolute_import
+
 import ctypes
 import platform
 
