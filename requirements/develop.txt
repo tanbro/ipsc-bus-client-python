@@ -3,6 +3,7 @@ wheel
 twine
 Sphinx
 recommonmark
+sphinx_rtd_theme
 sphinx-autobuild
 sphinx-pypi-upload
 coverage

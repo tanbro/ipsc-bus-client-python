@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+"""
+setuptools script
+"""
+
+from __future__ import with_statement
+
 import io
 import os.path
 import sys
@@ -7,35 +14,29 @@ import sys
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
 
-py_major_minor = '{0[0]}.{0[1]}'.format(sys.version_info)
+PY_MAJOR_MINOR = '{0[0]}.{0[1]}'.format(sys.version_info)
 
 
 def read(*names, **kwargs):
+    """
+    read out a text file
+    """
     with io.open(
-            os.path.join(os.path.dirname(__file__), *names),
-            encoding=kwargs.get("encoding", "utf8")
-    ) as fp:
-        return fp.read()
+        os.path.join(os.path.dirname(__file__), *names),
+        encoding=kwargs.get('encoding', 'utf8')
+    ) as stream:
+        return stream.read()
 
-
-version = {}
-exec(read('src/hesong/ipsc/busnetcli/version.py'), version)
-__version__ = version['__version__']
 
 INSTALL_REQUIRES = []
-if py_major_minor < '3.4':
+if PY_MAJOR_MINOR < '3.4':
     INSTALL_REQUIRES.append('enum34')
-elif py_major_minor < '3.2':
+elif PY_MAJOR_MINOR < '3.2':
     INSTALL_REQUIRES.append('futures')
 
 setup(
     name='hesong-ipsc-busnetcli',
     namespace_packages=['hesong', 'hesong.ipsc'],
-
-    # Versions should comply with PEP440.  For a discussion on single-sourcing
-    # the version across setup.py and the project code, see
-    # https://packaging.python.org/en/latest/development.html#single-sourcing-the-version
-    version=__version__,
 
     description='Python wrapper for Hesong IPSC CTI Service data bus client',
     long_description=read('README.rst'),
@@ -45,7 +46,7 @@ setup(
     packages=find_packages('src', exclude=['tests', 'docs']),
     package_dir={'': 'src'},  # tell distutils packages are under src
     # The project's main homepage.
-    url='http://bitbucket.org/hesong-opensource/ipsc-bus-client',
+    url='https://bitbucket.org/hesong-opensource/ipsc-bus-client-python',
 
     # Author details
     author='Liu Xue Yan',
@@ -74,6 +75,7 @@ setup(
             'twine',
             'Sphinx',
             'recommonmark',
+            'sphinx-rtd-theme',
             'sphinx-autobuild',
             'sphinx-pypi-upload',
             'coverage'
