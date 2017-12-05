@@ -145,7 +145,7 @@ CONNECTED_STATUS_CONNECTED = 6
 CONNECTED_STATUS_OK = 7
 
 
-class PacketHeader(ctypes.Structure):
+class PacketHeader(ctypes.Structure):  # pylint: disable=R0903
     """数据包头结构定义"""
     #: 设定为1字节对齐
     _pack_ = 1
@@ -167,7 +167,7 @@ class PacketHeader(ctypes.Structure):
 
 
 #: 数据包头结构指针
-PPacketHeader = ctypes.POINTER(PacketHeader)
+PACKETHEADER_POINTER = ctypes.POINTER(PacketHeader)
 
 #: Callback function call convert in the library
 if platform.system() == 'Windows':
@@ -175,24 +175,27 @@ if platform.system() == 'Windows':
 else:
     CALLBACKFUNCTYPE = ctypes.CFUNCTYPE
 
-fntyp_connection_cb = CALLBACKFUNCTYPE(
+FNTYP_CONNECTION_CB = CALLBACKFUNCTYPE(
     None, ctypes.c_void_p, ctypes.c_byte, ctypes.c_int, ctypes.c_int)
 
-fntyp_disconnect_cb = CALLBACKFUNCTYPE(None, ctypes.c_void_p, ctypes.c_byte)
+FNTYP_DISCONNECT_CB = CALLBACKFUNCTYPE(None, ctypes.c_void_p, ctypes.c_byte)
 
-fntyp_recvdata_cb = CALLBACKFUNCTYPE(
-    None, ctypes.c_void_p, ctypes.c_byte, PPacketHeader, ctypes.c_void_p, ctypes.c_int)
+FNTYP_RECVDATA_CB = CALLBACKFUNCTYPE(
+    None, ctypes.c_void_p, ctypes.c_byte, PACKETHEADER_POINTER, ctypes.c_void_p, ctypes.c_int)
 
-fntyp_global_connect_cb = CALLBACKFUNCTYPE(None, ctypes.c_void_p, ctypes.c_char, ctypes.c_char, ctypes.c_char,
-                                           ctypes.c_char, ctypes.c_char, ctypes.c_char_p)
+FNTYP_GLOBAL_CONNECT_CB = CALLBACKFUNCTYPE(None, ctypes.c_void_p, ctypes.c_char, ctypes.c_char,
+                                           ctypes.c_char, ctypes.c_char, ctypes.c_char,
+                                           ctypes.c_char_p)
 
-fntyp_invokeflow_ack_cb = CALLBACKFUNCTYPE(None, ctypes.c_void_p, ctypes.c_byte, PPacketHeader, ctypes.c_char_p,
+FNTYP_INVOKEFLOW_ACK_CB = CALLBACKFUNCTYPE(None, ctypes.c_void_p, ctypes.c_byte,
+                                           PACKETHEADER_POINTER, ctypes.c_char_p,
                                            ctypes.c_int, ctypes.c_int, ctypes.c_char_p)
 
-fntyp_invokeflow_ret_cb = CALLBACKFUNCTYPE(None, ctypes.c_void_p, ctypes.c_byte, PPacketHeader, ctypes.c_char_p,
+FNTYP_INVOKEFLOW_RET_CB = CALLBACKFUNCTYPE(None, ctypes.c_void_p, ctypes.c_byte,
+                                           PACKETHEADER_POINTER, ctypes.c_char_p,
                                            ctypes.c_int, ctypes.c_int, ctypes.c_char_p)
 
-fntyp_unitdata_cb = CALLBACKFUNCTYPE(
+FNTYP_UNITDATA_CB = CALLBACKFUNCTYPE(
     None, ctypes.c_byte, ctypes.c_byte, ctypes.c_void_p, ctypes.c_int)
 
-fntyp_trace_str_cb = CALLBACKFUNCTYPE(None, ctypes.c_char_p)
+FNTYP_TRACE_STR_CB = CALLBACKFUNCTYPE(None, ctypes.c_char_p)

@@ -16,7 +16,7 @@ from ._c.mutual import SMARTBUS_ERR_OK, SMARTBUS_ERR_ARGUMENT, SMARTBUS_ERR_CONN
     SMARTBUS_ERR_CLI_TOOMANY, SMARTBUS_ERR_CLI_EXIST, SMARTBUS_ERR_DEST_NONEXIST, SMARTBUS_ERR_REGISTERED_REPEAT, \
     SMARTBUS_ERR_TIMEOUT, SMARTBUS_ERR_OTHER
 
-error_code_message = {
+ERROR_CODE_MESSAGE = {
     SMARTBUS_ERR_ARGUMENT: 'SMARTBUS_ERR_ARGUMENT',
     SMARTBUS_ERR_CONN_NOT_ESTAB: 'SMARTBUS_ERR_CONN_NOT_ESTAB',
     SMARTBUS_ERR_CONNECT_BREAK: 'SMARTBUS_ERR_CONNECT_BREAK',
@@ -107,7 +107,7 @@ def check(code, raise_if_err=True):
     code = int(code)
     if code != SMARTBUS_ERR_OK:
         try:
-            msg = error_code_message[code]
+            msg = ERROR_CODE_MESSAGE[code]
         except KeyError:
             msg = 'UNDEFINED_ERROR'
         exc = SmartBusError(code, msg)

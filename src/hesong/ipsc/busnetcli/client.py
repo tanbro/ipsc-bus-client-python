@@ -8,21 +8,22 @@ from __future__ import absolute_import
 
 import json
 import os.path
-from ctypes import CDLL, byref, create_string_buffer, string_at, c_void_p, c_char_p, c_int, c_byte, c_size_t
+from ctypes import CDLL, byref, create_string_buffer, string_at, c_char_p, c_int, c_byte
 from ctypes.util import find_library
 from platform import system, machine
 
 from pkg_resources import Requirement, resource_filename, DistributionNotFound
 
 from . import version
-from ._c.netapi import *
+from ._c.netapi import *  # pylint: disable=W0401,W0614
 from .errors import check
-from .head import *
-from .utils import *
+from .head import *  # pylint: disable=W0401,W0614
+from .utils import *  # pylint: disable=W0401,W0614
 
 __all__ = ['Client']
 
 
+# pylint: disable=R0902,R0904
 class Client(LoggerMixin):
     """NET 客户端
 
@@ -37,7 +38,9 @@ class Client(LoggerMixin):
     _c_cbs = {}
     _global_connect_callback = None
 
-    def __init__(self, client_id, client_type, master_ip, master_port, slave_ip='', slave_port=None, user='',
+    # pylint: disable=R0913
+    def __init__(self, client_id, client_type, master_ip, master_port,
+                 slave_ip='', slave_port=None, user='',
                  password='', info=''):
         """
         :param int client_id: 本地 client id, >= 0 and <= 255
@@ -53,13 +56,14 @@ class Client(LoggerMixin):
         if not self._lib:
             raise RuntimeError('Library not been loaded')
         client_id = int(client_id)
-        if not (0 <= client_id <= 255):
-            raise ValueError('argument "local_client_id" must between 0 and 255')
+        if not 0 <= client_id <= 255:
+            raise ValueError(
+                'argument "local_client_id" must between 0 and 255')
         if client_id in self._instances:
             raise KeyError('Duplicated local client id "{}"'.format(client_id))
         self._client_id = client_id
         self._instances[self._client_id] = self
-        self._unit_id = self.__class__._unit_id
+        self._unit_id = self._unit_id
         self._access_unit_id = None
         self._client_type = client_type
         self._master_ip = str(master_ip)
@@ -71,12 +75,15 @@ class Client(LoggerMixin):
         info = '' if info is None else str(info)
         if not info:
             try:
-                info = '{} {}'.format(self.__class__.__qualname__, version.__version__)
+                info = '{} {}'.format(
+                    self.__class__.__qualname__, version.__version__)
             except AttributeError:
-                info = '{} {}'.format(self.__class__.__name__, version.__version__)
+                info = '{} {}'.format(
+                    self.__class__.__name__, version.__version__)
         self._info = info
 
     @classmethod
+    # pylint: disable=R0915
     def initialize(cls, unit_id, global_connect_callback=None, lib_path=''):
         """初始化
 
@@ -90,7 +97,8 @@ class Client(LoggerMixin):
         全局节点客户端连接、断开事件，当smartbus上某个节点发生连接或者断开时触发。
         其函数形如：
 
-        .. function:: global_connect_callback(unit_id, client_id, client_type, access_unit_id, status_code, info)
+        .. function:: global_connect_callback(
+                            unit_id, client_id, client_type, access_unit_id, status_code, info)
 
             :param int unit_id: 发生连接或断开事件的Smartbus节点单元ID
             :param int client_id: 发生连接或断开事件的Smartbus节点单元中的客户端ID
@@ -108,7 +116,8 @@ class Client(LoggerMixin):
         _system = system()
         _machine = machine()
         if lib_path:
-            logger.debug('initialize: try loading library from specified path: CDLL(%r)', lib_path)
+            logger.debug(
+                'initialize: try loading library from specified path: CDLL(%r)', lib_path)
             cls._lib = CDLL(lib_path)
         else:
             if _system == 'Linux':
@@ -122,17 +131,21 @@ class Client(LoggerMixin):
                 'data', 'library', _system, _machine, so_file_name
             )
             try:
-                so_file_path = resource_filename(Requirement.parse('hesong-ipsc-busnetcli'), resource_name)
+                so_file_path = resource_filename(Requirement.parse(
+                    'hesong-ipsc-busnetcli'), resource_name)
             except DistributionNotFound as err:
                 logger.warning('%s', err)
             else:
-                logger.debug('initialize: try loading library from package data: CDLL(%r)', so_file_path)
+                logger.debug(
+                    'initialize: try loading library from package data: CDLL(%r)', so_file_path)
                 cls._lib = CDLL(so_file_path)
             if not cls._lib:
-                logger.debug('initialize: try loading library from system path: find_library(%r)', DLL_NAME)
+                logger.debug(
+                    'initialize: try loading library from system path: find_library(%r)', DLL_NAME)
                 lib_path = find_library(DLL_NAME)
                 if not lib_path:
-                    raise RuntimeError('Failed to find library {}'.format(DLL_NAME))
+                    raise RuntimeError(
+                        'Failed to find library {}'.format(DLL_NAME))
                 logger.debug('initialize: CDLL(%r)', lib_path)
                 cls._lib = CDLL(lib_path)
         if not cls._lib:
@@ -149,11 +162,11 @@ class Client(LoggerMixin):
         cls._unit_id = unit_id
         # C API: SetCallBackFn
         logger.debug('initialize: SetCallBackFn')
-        cls._c_cbs['connection'] = fntyp_connection_cb(cls._cb_cnx)
-        cls._c_cbs['recvdata'] = fntyp_recvdata_cb(cls._cb_rcv)
-        cls._c_cbs['disconnect'] = fntyp_disconnect_cb(cls._cb_dnx)
-        cls._c_cbs['invokeflow_ret'] = fntyp_invokeflow_ret_cb(cls._cb_dnx)
-        cls._c_cbs['global_connect'] = fntyp_global_connect_cb(cls._cb_g_cnx)
+        cls._c_cbs['connection'] = FNTYP_CONNECTION_CB(cls._cb_cnx)
+        cls._c_cbs['recvdata'] = FNTYP_RECVDATA_CB(cls._cb_rcv)
+        cls._c_cbs['disconnect'] = FNTYP_DISCONNECT_CB(cls._cb_dnx)
+        cls._c_cbs['invokeflow_ret'] = FNTYP_INVOKEFLOW_RET_CB(cls._cb_dnx)
+        cls._c_cbs['global_connect'] = FNTYP_GLOBAL_CONNECT_CB(cls._cb_g_cnx)
         SetCallBackFn.c_func(
             cls._c_cbs['connection'],
             cls._c_cbs['recvdata'],
@@ -164,12 +177,13 @@ class Client(LoggerMixin):
         )
         # C API: SetCallBackFnEx
         logger.debug('initialize: SetCallBackFnEx')
-        cls._c_cbs['flow_ack'] = fntyp_invokeflow_ack_cb(cls._cb_flow_ack)
-        SetCallBackFnEx.c_func(c_char_p(b'smartbus_invokeflow_ack_cb'), cls._c_cbs['flow_ack'])
+        cls._c_cbs['flow_ack'] = FNTYP_INVOKEFLOW_ACK_CB(cls._cb_flow_ack)
+        SetCallBackFnEx.c_func(
+            c_char_p(b'smartbus_invokeflow_ack_cb'), cls._c_cbs['flow_ack'])
         # CAPI: SetTraceStr
         logger.debug('initialize: SetTraceStr')
-        cls._c_cbs['trace'] = fntyp_trace_str_cb(cls._cb_trace)
-        cls._c_cbs['traceerr'] = fntyp_trace_str_cb(cls._cb_trace_err)
+        cls._c_cbs['trace'] = FNTYP_TRACE_STR_CB(cls._cb_trace)
+        cls._c_cbs['traceerr'] = FNTYP_TRACE_STR_CB(cls._cb_trace_err)
         SetTraceStr.c_func(cls._c_cbs['trace'], cls._c_cbs['traceerr'])
         # others
         cls._global_connect_callback = global_connect_callback
@@ -178,6 +192,8 @@ class Client(LoggerMixin):
 
     @classmethod
     def release(cls):
+        """释放 Library
+        """
         Release.c_func()
 
     @classmethod
@@ -197,7 +213,7 @@ class Client(LoggerMixin):
         inst = cls.find(local_client_id)
         if inst:
             if ack == 0:  # 建立连接成功
-                inst._access_unit_id = access_point_unit_id
+                inst._access_unit_id = access_point_unit_id  # pylint: disable=W0212
                 inst.on_connect()
             else:  # 连接失败
                 inst.on_connect_fail(ack)
@@ -219,7 +235,6 @@ class Client(LoggerMixin):
         )
         inst = cls.find(local_client_id)
         if inst:
-            # inst._event_executor.submit(inst.on_data, Head(head), string_at(data, size) if data else None)
             inst.on_data(Head(head), string_at(data, size) if data else None)
 
     @classmethod
@@ -253,7 +268,8 @@ class Client(LoggerMixin):
         在调用流程之后，通过该回调函数类型获知流程调用是否成功
         """
         cls.get_logger().debug(
-            'flow-ack: arg=%s, local_client_id=%s, head=%s, project_id=%s, invoke_id=%s, ack=%s, msg=%s',
+            'flow-ack: arg=%s, local_client_id=%s, head=%s, project_id=%s, '
+            'invoke_id=%s, ack=%s, msg=%s',
             arg, local_client_id, head, project_id, invoke_id, ack, msg
         )
 
@@ -271,10 +287,12 @@ class Client(LoggerMixin):
             if inst:
                 inst.on_flow_ack(
                     _head,
-                    b2s_recode(string_at(project_id).strip(b'\x00'), 'cp936', 'utf-8').strip(),
+                    b2s_recode(string_at(project_id).strip(
+                        b'\x00'), 'cp936', 'utf-8').strip(),
                     invoke_id,
                     ack,
-                    b2s_recode(string_at(msg).strip(b'\x00'), 'cp936', 'utf-8').strip() if msg else ''
+                    b2s_recode(string_at(msg).strip(b'\x00'),
+                               'cp936', 'utf-8').strip() if msg else ''
                 )
 
     @classmethod
@@ -302,7 +320,8 @@ class Client(LoggerMixin):
             _head = None
             cls.get_logger().error(
                 'FlowRet head argument value error: '
-                'arg=%s, local_client_id=%s, head=%s, project_id=%s, invoke_id=%s, ret=%s, param=%s',
+                'arg=%s, local_client_id=%s, head=%s, project_id=%s, '
+                'invoke_id=%s, ret=%s, param=%s',
                 arg, local_client_id, head, project_id, invoke_id, ret, param
             )
         inst = cls.find(local_client_id)
@@ -313,14 +332,16 @@ class Client(LoggerMixin):
             if _status_code == 1:
                 py_params = []
                 if param:
-                    _params = b2s_recode(string_at(param).strip(b'\x00'), 'cp936', 'utf-8').strip()
+                    _params = b2s_recode(string_at(param).strip(
+                        b'\x00'), 'cp936', 'utf-8').strip()
                     if _params:
                         py_params = json.loads(_params)
                 inst.on_flow_resp(_head, _project_id, _invoke_id, py_params)
             elif _status_code == SMARTBUS_ERR_TIMEOUT:
                 inst.on_flow_timeout(_head, _project_id, _invoke_id)
             else:
-                inst.on_flow_error(_head, _project_id, _invoke_id, _status_code)
+                inst.on_flow_error(_head, _project_id,
+                                   _invoke_id, _status_code)
 
     @classmethod
     def _cb_g_cnx(cls, arg, unit_id, client_id, client_type, access_unit, status, add_info):
@@ -338,7 +359,8 @@ class Client(LoggerMixin):
         """
         cls.get_logger().debug(
             'global-connection: '
-            'arg=%s, unit_id=%s, client_id=%s, client_type=%s, access_unit=%s, status=%s, add_info=%s',
+            'arg=%s, unit_id=%s, client_id=%s, client_type=%s, access_unit=%s, '
+            'status=%s, add_info=%s',
             arg, unit_id, client_id, client_type, access_unit, status, add_info
         )
         if callable(cls._global_connect_callback):
@@ -394,46 +416,92 @@ class Client(LoggerMixin):
 
     @property
     def access_unit_id(self):
+        """连接点的UnitID
+
+        :rtype: int
+        """
         return self._access_unit_id
 
     @property
     def unit_id(self):
+        """发生连接或断开事件的Smartbus节点单元ID
+
+        :rtype: int
+        """
         return self._unit_id
 
     @property
     def client_id(self):
+        """本地 client id
+
+        :rtype: int
+
+        >= 0 and <= 255
+        """
         return self._client_id
 
     @property
     def client_type(self):
+        """本地 client type
+
+        :rtype: int
+        """
         return self._client_type
 
     @property
     def master_ip(self):
+        """主服务器IP地址
+
+        :rtype: str
+        """
         return self._master_ip
 
     @property
     def master_port(self):
+        """主服务器端口
+
+        :rtype: int
+        """
         return self._master_port
 
     @property
     def slave_ip(self):
+        """从服务器IP地址
+
+        :rtype: str
+        """
         return self._slave_ip
 
     @property
     def slave_port(self):
+        """从服务器端口
+
+        :rtype: int
+        """
         return self._slave_port
 
     @property
     def user(self):
+        """用户名该
+
+        :rtype: str
+        """
         return self._user
 
     @property
     def password(self):
+        """密码
+
+        :rtype: str
+        """
         return self._password
 
     @property
     def info(self):
+        """附加信息
+
+        :rtype: str
+        """
         return self._info
 
     def activate(self):
@@ -455,10 +523,12 @@ class Client(LoggerMixin):
             c_char_p(to_bytes(self._slave_ip)) if self._slave_ip else None,
             c_ushort(self._slave_port),
             c_char_p(to_bytes(self._user if isinstance(self._user, str) else '')),
-            c_char_p(to_bytes(self._password if isinstance(self._password, str) else '')),
+            c_char_p(to_bytes(self._password if isinstance(
+                self._password, str) else '')),
             c_char_p(to_bytes(self._info if isinstance(self._info, str) else ''))
         )
-        self.logger.debug('<%s> CreateConnect() -> %s', self._client_id, error_code)
+        self.logger.debug('<%s> CreateConnect() -> %s',
+                          self._client_id, error_code)
         check(error_code)
 
     def send_data(self, cmd, cmd_type, dst_unit_id, dst_client_id, dst_client_type, data):
@@ -531,7 +601,8 @@ class Client(LoggerMixin):
         """
         self.logger.debug(
             'notify: '
-            'server_unit_id=%s, process_index=%s, project_id=%s, title=%s, mode=%s, expires=%s, txt=%s',
+            'server_unit_id=%s, process_index=%s, project_id=%s, title=%s, '
+            'mode=%s, expires=%s, txt=%s',
             server_unit_id, process_index, project_id, title, mode, expires, txt
         )
         iid = SendNotify.c_func(
@@ -548,7 +619,8 @@ class Client(LoggerMixin):
             check(iid)
         return iid
 
-    def launch_flow(self, server_unit_id, process_index, project_id, flow_id, mode, timeout, params):
+    def launch_flow(self, server_unit_id, process_index,
+                    project_id, flow_id, mode, timeout, params):
         """调用流程
 
         :param int server_unit_id: 目标 `IPSC` 服务器 `smartbus` 单元ID
@@ -565,7 +637,8 @@ class Client(LoggerMixin):
         """
         self.logger.debug(
             'launch-flow: '
-            'server_unit_id=%s, process_index=%s, project_id=%s, flow_id=%s, mode=%s, timeout=%s, params=%s',
+            'server_unit_id=%s, process_index=%s, project_id=%s, flow_id=%s, '
+            'mode=%s, timeout=%s, params=%s',
             server_unit_id, process_index, project_id, flow_id, mode, timeout, params
         )
         value_string_list = c_char_p(to_bytes(json.dumps(params)))
