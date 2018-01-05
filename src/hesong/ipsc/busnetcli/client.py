@@ -15,6 +15,7 @@ from platform import system, machine
 from pkg_resources import Requirement, resource_filename, DistributionNotFound
 
 from . import version
+from ._c.mutual import SMARTBUS_ERR_TIMEOUT
 from ._c.netapi import *  # pylint: disable=W0401,W0614
 from .errors import check
 from .head import *  # pylint: disable=W0401,W0614
@@ -259,10 +260,10 @@ class Client(LoggerMixin):
 
         :param c_void_p arg: 自定义数据
         :param c_byte local_client_id: 本地 ClientId
-        :param PPacketHeader head: 消息头。 结果超时或失败时，head为 NULL
+        :param PPacketHeader head: 消包头信息。ack结果为超时（-25）时，head为 NULL
         :param c_char_p project_id: project id
         :param c_int invoke_id: 调用ID
-        :param c_int ack: 流程调用是否成功。1表示成功，其它请参靠考误码
+        :param c_int ack: 结果，1 调用成功（有且执行SUBSTART节点）、< 1 调用失败。参考考误码
         :param c_char_p msg: 调用失败时的信息描述
 
         在调用流程之后，通过该回调函数类型获知流程调用是否成功
@@ -273,27 +274,31 @@ class Client(LoggerMixin):
             arg, local_client_id, head, project_id, invoke_id, ack, msg
         )
 
-        try:
-            _head = Head(head)
-        except ValueError:
+        if ack == SMARTBUS_ERR_TIMEOUT:
             _head = None
-            cls.get_logger().error(
-                'FlowAck head argument value error: '
-                'arg=%s, local_client_id=%s, head=%s, project_id=%s, invoke_id=%s, ack=%s, msg=%s',
-                arg, local_client_id, head, project_id, invoke_id, ack, msg
-            )
-        if _head:
-            inst = cls.find(local_client_id)
-            if inst:
-                inst.on_flow_ack(
-                    _head,
-                    b2s_recode(string_at(project_id).strip(
-                        b'\x00'), 'cp936', 'utf-8').strip(),
-                    invoke_id,
-                    ack,
-                    b2s_recode(string_at(msg).strip(b'\x00'),
-                               'cp936', 'utf-8').strip() if msg else ''
+        else:
+            try:
+                _head = Head(head)
+            except ValueError:
+                _head = None
+                cls.get_logger().error(
+                    'FlowAck head argument value error: '
+                    'arg=%s, local_client_id=%s, head=%s, project_id=%s, invoke_id=%s, ack=%s, msg=%s',
+                    arg, local_client_id, head, project_id, invoke_id, ack, msg
                 )
+        inst = cls.find(local_client_id)
+        if inst:
+            inst.on_flow_ack(
+                _head,
+                b2s_recode(
+                    string_at(project_id).strip(b'\x00'),
+                    'cp936', 'utf-8').strip(),
+                invoke_id,
+                ack,
+                b2s_recode(
+                    string_at(msg).strip(b'\x00'),
+                    'cp936', 'utf-8').strip() if msg else ''
+            )
 
     @classmethod
     def _cb_flow_ret(cls, arg, local_client_id, head, project_id, invoke_id, ret, param):
