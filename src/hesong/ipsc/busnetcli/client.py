@@ -8,17 +8,18 @@ from __future__ import absolute_import
 
 import json
 import os.path
-from ctypes import CDLL, byref, create_string_buffer, string_at, c_char_p, c_int, c_byte
+from ctypes import CDLL, byref, create_string_buffer, string_at, c_char_p, c_int, c_byte, c_ushort
 from ctypes.util import find_library
 from platform import system, machine
 
 from pkg_resources import Requirement, resource_filename, DistributionNotFound
 
 from . import version
-from ._c.mutual import SMARTBUS_ERR_TIMEOUT
+from ._c.mutual import FNTYP_CONNECTION_CB, FNTYP_RECVDATA_CB, FNTYP_DISCONNECT_CB, FNTYP_GLOBAL_CONNECT_CB, \
+    FNTYP_INVOKEFLOW_ACK_CB, FNTYP_INVOKEFLOW_RET_CB, FNTYP_TRACE_STR_CB, SMARTBUS_ERR_TIMEOUT
 from ._c.netapi import *  # pylint: disable=W0401,W0614
 from .errors import check
-from .head import *  # pylint: disable=W0401,W0614
+from .head import Head
 from .utils import *  # pylint: disable=W0401,W0614
 
 __all__ = ['Client']
