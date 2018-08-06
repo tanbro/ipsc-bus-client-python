@@ -19,7 +19,7 @@ Installation
 (以 Ubuntu 1604 LTS 系统全局模式安装为例)
 
 Install from PyPI_
-------------------
+==================
 
 使用 pip_ 工具从 PyPI_ 安装
 
@@ -28,7 +28,7 @@ Install from PyPI_
     sudo pip install hesong-ipsc-busnetcli
 
 Install from code
------------------
+=================
 
 .. code:: shell
 
