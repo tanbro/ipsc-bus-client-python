@@ -4,7 +4,6 @@
 some help class/functions for client API.
 """
 
-
 __all__ = ['CFunc', 'declare', 'IpcFunc', 'NetFunc']
 
 
@@ -34,7 +33,7 @@ class CFunc:
     .. warning:: Can **NOT** be used for callback functions
     """
     added = False
-    c_func = None
+    c_func = None  # type: function
     prefix = ''
     func_name = ''
     argtypes = []

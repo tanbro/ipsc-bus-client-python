@@ -75,8 +75,7 @@ class SmartBusError(Exception):
     """
 
     def __init__(self, code, message):
-        super(Exception, self).__init__(
-            self, 'smartbus wrong API return code[{}]: "{}".'.format(code, message))
+        super(SmartBusError, self).__init__('smartbus API error return code[{}]: "{}".'.format(code, message))
         self._code = code
         self._message = message
 
@@ -93,7 +92,7 @@ class SmartBusError(Exception):
         return self._message
 
 
-def check(code, raise_if_err=True):
+def check(code, raise_if_err=True):  # pylint: disable=inconsistent-return-statements
     """检查 SmartBus 客户端 C-API 的返回结果是否正确
 
     :param code: 要检查的返回结果编码
@@ -113,5 +112,4 @@ def check(code, raise_if_err=True):
         exc = SmartBusError(code, msg)
         if raise_if_err:
             raise exc
-        else:
-            return exc
+        return exc

@@ -38,7 +38,7 @@ class Client(LoggerMixin):
     _unit_id = None
     _instances = {}
     _c_cbs = {}
-    _global_connect_callback = None
+    _global_connect_callback = None  # type: function
 
     # pylint: disable=R0913
     def __init__(self, client_id, client_type, master_ip, master_port,
@@ -159,7 +159,7 @@ class Client(LoggerMixin):
             func_cls.bind(cls._lib)
         # C API: init
         logger.debug('initialize: Init')
-        ret = Init.c_func(c_byte(unit_id))
+        ret = Init.c_func(c_byte(unit_id))  # pylint:disable=not-callable
         check(ret)
         cls._unit_id = unit_id
         # C API: SetCallBackFn
@@ -169,7 +169,7 @@ class Client(LoggerMixin):
         cls._c_cbs['disconnect'] = FNTYP_DISCONNECT_CB(cls._cb_dnx)
         cls._c_cbs['invokeflow_ret'] = FNTYP_INVOKEFLOW_RET_CB(cls._cb_dnx)
         cls._c_cbs['global_connect'] = FNTYP_GLOBAL_CONNECT_CB(cls._cb_g_cnx)
-        SetCallBackFn.c_func(
+        SetCallBackFn.c_func(  # pylint:disable=not-callable
             cls._c_cbs['connection'],
             cls._c_cbs['recvdata'],
             cls._c_cbs['disconnect'],
@@ -180,13 +180,15 @@ class Client(LoggerMixin):
         # C API: SetCallBackFnEx
         logger.debug('initialize: SetCallBackFnEx')
         cls._c_cbs['flow_ack'] = FNTYP_INVOKEFLOW_ACK_CB(cls._cb_flow_ack)
-        SetCallBackFnEx.c_func(
-            c_char_p(b'smartbus_invokeflow_ack_cb'), cls._c_cbs['flow_ack'])
+        SetCallBackFnEx.c_func(  # pylint:disable=not-callable
+            c_char_p(b'smartbus_invokeflow_ack_cb'),
+            cls._c_cbs['flow_ack']
+        )
         # CAPI: SetTraceStr
         logger.debug('initialize: SetTraceStr')
         cls._c_cbs['trace'] = FNTYP_TRACE_STR_CB(cls._cb_trace)
         cls._c_cbs['traceerr'] = FNTYP_TRACE_STR_CB(cls._cb_trace_err)
-        SetTraceStr.c_func(cls._c_cbs['trace'], cls._c_cbs['traceerr'])
+        SetTraceStr.c_func(cls._c_cbs['trace'], cls._c_cbs['traceerr'])  # pylint:disable=not-callable
         # others
         cls._global_connect_callback = global_connect_callback
         # Load and init OK!!!
@@ -196,7 +198,7 @@ class Client(LoggerMixin):
     def release(cls):
         """释放 Library
         """
-        Release.c_func()
+        Release.c_func()  # pylint:disable=not-callable
 
     @classmethod
     def _cb_cnx(cls, arg, local_client_id, access_point_unit_id, ack):
@@ -315,6 +317,7 @@ class Client(LoggerMixin):
 
         通过类类型的回调函数，获取被调用流程的“子项目结束”节点的返回值列表
         """
+        # pylint: disable=too-many-locals
         cls.get_logger().debug(
             'flow-ret: '
             'arg=%s, local_client_id=%s, head=%s, project_id=%s, invoke_id=%s, ret=%s, param=%s',
@@ -370,7 +373,7 @@ class Client(LoggerMixin):
             arg, unit_id, client_id, client_type, access_unit, status, add_info
         )
         if callable(cls._global_connect_callback):
-            cls._global_connect_callback(
+            cls._global_connect_callback(  # pylint:disable=not-callable
                 ord(unit_id),
                 ord(client_id),
                 ord(client_type),
@@ -521,7 +524,7 @@ class Client(LoggerMixin):
         """
         self.logger.info('<%s> connect', self._client_id)
         self.logger.debug('<%s> CreateConnect() ...', self._client_id)
-        error_code = CreateConnect.c_func(
+        error_code = CreateConnect.c_func(  # pylint:disable=not-callable
             c_byte(self._client_id),
             c_int(self._client_type),
             c_char_p(to_bytes(self._master_ip)) if self._master_ip else None,
@@ -554,7 +557,7 @@ class Client(LoggerMixin):
         )
         length = len(data) if data else 0
         buff = create_string_buffer(data, length) if data else None
-        error_code = SendData.c_func(
+        error_code = SendData.c_func(  # pylint:disable=not-callable
             c_byte(self._client_id),
             c_byte(cmd),
             c_byte(cmd_type),
@@ -581,7 +584,7 @@ class Client(LoggerMixin):
         )
         length = len(data) if data else 0
         buff = create_string_buffer(data, length) if data else None
-        error_code = SendPing.c_func(
+        error_code = SendPing.c_func(  # pylint:disable=not-callable
             c_byte(self._client_id),
             c_int(dst_unit_id),
             c_int(dst_client_id),
@@ -611,7 +614,7 @@ class Client(LoggerMixin):
             'mode=%s, expires=%s, txt=%s',
             server_unit_id, process_index, project_id, title, mode, expires, txt
         )
-        iid = SendNotify.c_func(
+        iid = SendNotify.c_func(  # pylint:disable=not-callable
             c_byte(self._client_id),
             c_int(server_unit_id),
             c_int(process_index),
@@ -648,7 +651,7 @@ class Client(LoggerMixin):
             server_unit_id, process_index, project_id, flow_id, mode, timeout, params
         )
         value_string_list = c_char_p(to_bytes(json.dumps(params)))
-        iid = RemoteInvokeFlow.c_func(
+        iid = RemoteInvokeFlow.c_func(  # pylint:disable=not-callable
             c_byte(self._client_id),
             c_int(server_unit_id),
             c_int(process_index),

@@ -303,4 +303,8 @@ local.properties
 
 
 # setuptools scm_version
-src/hesong/ipsc/busnetcli/_scm_version.py
+_version.py
+
+# exclude data so
+!src/hesong/ipsc/busnetcli/data/library/*/*.so
+!src/hesong/ipsc/busnetcli/data/library/*/*.dll
