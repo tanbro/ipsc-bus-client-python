@@ -5,41 +5,13 @@
 setuptools script
 """
 
-from __future__ import with_statement
-
-import io
-import os.path
-import sys
-
-# Always prefer setuptools over distutils
 from setuptools import setup, find_packages
-
-PY_MAJOR_MINOR = '{0[0]}.{0[1]}'.format(sys.version_info)
-
-
-def read(*names, **kwargs):
-    """
-    read out a text file
-    """
-    with io.open(
-        os.path.join(os.path.dirname(__file__), *names),
-        encoding=kwargs.get('encoding', 'utf8')
-    ) as stream:
-        return stream.read()
-
-
-INSTALL_REQUIRES = []
-if PY_MAJOR_MINOR < '3.4':
-    INSTALL_REQUIRES.append('enum34')
-elif PY_MAJOR_MINOR < '3.2':
-    INSTALL_REQUIRES.append('futures')
 
 setup(
     name='hesong-ipsc-busnetcli',
     namespace_packages=['hesong', 'hesong.ipsc'],
 
     description='Python wrapper for Hesong IPSC CTI Service data bus client',
-    long_description=read('README.rst'),
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
@@ -57,31 +29,21 @@ setup(
 
     # requirements files see:
     # https://packaging.python.org/en/latest/technical.html#install-requires-vs-requirements-files
-    python_requires='>=2.7,!=3.0.*,!=3.1.*',
+    python_requires='>=2.6,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*',
     # use setuptools_scm
     use_scm_version={
-        # guess-next-dev:	automatically guesses the next development version (default)
+        # guess-next-dev: automatically guesses the next development version (default)
         # post-release:	generates post release versions (adds postN)
-        'version_scheme': 'guess-next-dev',
-        'write_to': 'src/hesong/ipsc/busnetcli/_scm_version.py',
+        # 'version_scheme': 'guess-next-dev',
+        'write_to': 'src/hesong/ipsc/busnetcli/_version.py',
     },
     setup_requires=['setuptools_scm', 'setuptools_scm_git_archive'],
 
-    install_requires=INSTALL_REQUIRES,
-    extras_require={
-        'develop': [
-            'setuptools',
-            'wheel',
-            'twine',
-            'Sphinx',
-            'recommonmark',
-            'sphinx-rtd-theme',
-            'sphinx-autobuild',
-            'sphinx-pypi-upload',
-            'coverage'
-        ],
-        'test': ['coverage']
-    },
+    install_requires=[
+        'enum34;python_version<"3.4"',
+        'futures;python_version<"3.2"',
+    ],
+
     # Included data files
     package_data={
         '': ['data/library/*/*/*'],
@@ -108,8 +70,6 @@ setup(
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',

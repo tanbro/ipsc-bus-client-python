@@ -7,7 +7,7 @@ from time import time
 __all__ = ['Head']
 
 
-class Head:
+class Head:  # pylint:disable=too-many-instance-attributes
     """Smartbus通信包头信息
 
     每当接收到数据时，所触发的事件中，都包含该类型的参数，记录了一些数据包的相关信息
@@ -24,7 +24,7 @@ class Head:
         self._cmd_type = 0
         self._src_unit_client_type = 0
         self._src_unit_id = 0
-        self._src_unit_clientId = 0
+        self._src_unit_client_id = 0
         self._dst_unit_client_type = 0
         self._dst_unit_id = 0
         self._dst_unit_client_id = 0
@@ -34,7 +34,7 @@ class Head:
         self._cmd_type = ptr.contents.cmdtype
         self._src_unit_client_type = ord(ptr.contents.src_unit_client_type)
         self._src_unit_id = ord(ptr.contents.src_unit_id)
-        self._src_unit_clientId = ord(ptr.contents.src_unit_client_id)
+        self._src_unit_client_id = ord(ptr.contents.src_unit_client_id)
         self._dst_unit_client_type = ord(ptr.contents.dest_unit_client_type)
         self._dst_unit_id = ord(ptr.contents.dest_unit_id)
         self._dst_unit_client_id = ord(ptr.contents.dest_unit_client_id)
@@ -43,6 +43,7 @@ class Head:
         self._ts = time()
 
     def __repr__(self):
+        # pylint: disable=invalid-name
         s = '<%s.%s object at %s. ' + \
             'cmd=%s, ' + \
             'cmd_type=%s, ' + \
@@ -62,7 +63,7 @@ class Head:
             self._cmd_type,
             self._src_unit_client_type,
             self._src_unit_id,
-            self._src_unit_clientId,
+            self._src_unit_client_id,
             self._dst_unit_client_type,
             self._dst_unit_id,
             self._dst_unit_client_id,
@@ -102,7 +103,7 @@ class Head:
     def src_unit_client_id(self):
         """ 发送者客户端ID
         """
-        return self._src_unit_clientId
+        return self._src_unit_client_id
 
     @property
     def dst_unit_client_type(self):
@@ -135,5 +136,5 @@ class Head:
         return self._data_length
 
     @property
-    def ts(self):
+    def ts(self):  # pylint: disable=invalid-name
         return self._ts

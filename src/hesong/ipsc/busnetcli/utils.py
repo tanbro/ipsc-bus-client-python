@@ -12,10 +12,10 @@ __all__ = ['b2s_recode', 's2b_recode', 'to_bytes', 'to_str', 'to_unicode', 'Logg
 
 if bytes != str:  # Python 3
     #: Define text string data type, same as that in Python 2.x.
-    unicode = str
+    unicode = str  # pylint: disable=invalid-name
 
 
-def b2s_recode(bs, source_encoding=None, target_encoding=None):
+def b2s_recode(bs, source_encoding=None, target_encoding=None):  # pylint: disable=invalid-name
     """将 :class:`bytes` 字符串重编码为 :class:`str` 字符串
 
     :param bytes bs: 待转换字节字符串
@@ -30,11 +30,11 @@ def b2s_recode(bs, source_encoding=None, target_encoding=None):
         return bs
     if bytes == str:  # Python 2
         return bs.decode(source_encoding).encode(target_encoding)
-    else:  # Python 3
-        return bs.decode(source_encoding)
+    # Python 3
+    return bs.decode(source_encoding)
 
 
-def s2b_recode(s, source_encoding=None, target_encoding=None):
+def s2b_recode(s, source_encoding=None, target_encoding=None):  # pylint: disable=invalid-name
     """将 :class:`str` 字符串重编码为 :class:`bytes` 字符串
 
     :param str s: 待转换字节字符串
@@ -48,11 +48,11 @@ def s2b_recode(s, source_encoding=None, target_encoding=None):
         return s
     if bytes == str:  # Python 2
         return s.decode(source_encoding).encode(target_encoding)
-    else:  # Python 3
-        return s.encode(target_encoding)
+    # Python 3
+    return s.encode(target_encoding)
 
 
-def to_bytes(s, encoding='utf-8'):
+def to_bytes(s, encoding='utf-8'):  # pylint: disable=invalid-name
     """Convert to `bytes` string.
 
     :param s: String to convert.
@@ -68,15 +68,14 @@ def to_bytes(s, encoding='utf-8'):
     """
     if s is None:
         return s
-    elif isinstance(s, bytes):
+    if isinstance(s, bytes):
         return s
-    elif isinstance(s, unicode):
+    if isinstance(s, unicode):
         return s.encode(encoding)
-    else:
-        raise TypeError('Type of argument "s" is neither "str" nor "bytes".')
+    raise TypeError('Type of argument "s" is neither "str" nor "bytes".')
 
 
-def to_str(s, encoding='utf-8'):
+def to_str(s, encoding='utf-8'):  # pylint: disable=invalid-name
     """Convert to `str` string.
 
     :param s: String to convert.
@@ -93,11 +92,11 @@ def to_str(s, encoding='utf-8'):
     """
     if bytes == str:  # Python 2
         return to_bytes(s, encoding)
-    else:  # Python 3
-        return to_unicode(s, encoding)
+    # Python 3
+    return to_unicode(s, encoding)
 
 
-def to_unicode(s, encoding='utf-8'):
+def to_unicode(s, encoding='utf-8'):  # pylint: disable=invalid-name
     """Convert to `unicode` string.
 
     :param s: String to convert.
@@ -113,12 +112,11 @@ def to_unicode(s, encoding='utf-8'):
     """
     if s is None:
         return s
-    elif isinstance(s, bytes):
+    if isinstance(s, bytes):
         return s.decode(encoding)
-    elif isinstance(s, unicode):
+    if isinstance(s, unicode):
         return s
-    else:
-        raise TypeError('Type of argument "s" is neither "str" nor "bytes".')
+    raise TypeError('Type of argument "s" is neither "str" nor "bytes".')
 
 
 class LoggerMixin:

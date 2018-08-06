@@ -16,7 +16,7 @@ from ._c.mutual import SMARTBUS_ERR_OK, SMARTBUS_ERR_ARGUMENT, SMARTBUS_ERR_CONN
     SMARTBUS_ERR_CLI_TOOMANY, SMARTBUS_ERR_CLI_EXIST, SMARTBUS_ERR_DEST_NONEXIST, SMARTBUS_ERR_REGISTERED_REPEAT, \
     SMARTBUS_ERR_TIMEOUT, SMARTBUS_ERR_OTHER
 
-error_code_message = {
+ERROR_CODE_MESSAGE = {
     SMARTBUS_ERR_ARGUMENT: 'SMARTBUS_ERR_ARGUMENT',
     SMARTBUS_ERR_CONN_NOT_ESTAB: 'SMARTBUS_ERR_CONN_NOT_ESTAB',
     SMARTBUS_ERR_CONNECT_BREAK: 'SMARTBUS_ERR_CONNECT_BREAK',
@@ -75,8 +75,7 @@ class SmartBusError(Exception):
     """
 
     def __init__(self, code, message):
-        super(Exception, self).__init__(
-            self, 'smartbus wrong API return code[{}]: "{}".'.format(code, message))
+        super(SmartBusError, self).__init__('smartbus API error return code[{}]: "{}".'.format(code, message))
         self._code = code
         self._message = message
 
@@ -93,7 +92,7 @@ class SmartBusError(Exception):
         return self._message
 
 
-def check(code, raise_if_err=True):
+def check(code, raise_if_err=True):  # pylint: disable=inconsistent-return-statements
     """检查 SmartBus 客户端 C-API 的返回结果是否正确
 
     :param code: 要检查的返回结果编码
@@ -107,11 +106,10 @@ def check(code, raise_if_err=True):
     code = int(code)
     if code != SMARTBUS_ERR_OK:
         try:
-            msg = error_code_message[code]
+            msg = ERROR_CODE_MESSAGE[code]
         except KeyError:
             msg = 'UNDEFINED_ERROR'
         exc = SmartBusError(code, msg)
         if raise_if_err:
             raise exc
-        else:
-            return exc
+        return exc
