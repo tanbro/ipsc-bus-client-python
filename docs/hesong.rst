@@ -1,6 +1,11 @@
 hesong package
 ==============
 
+.. automodule:: hesong
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Subpackages
 -----------
 
@@ -8,10 +13,3 @@ Subpackages
 
     hesong.ipsc
 
-Module contents
----------------
-
-.. automodule:: hesong
-    :members:
-    :undoc-members:
-    :show-inheritance:

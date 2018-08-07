@@ -14,27 +14,24 @@ Features
 .. warning::
     ipsc-bus-client_ 目前只提供了 ``Linux-x86_64`` 支持。
 
-Installation
-************
-(以 Ubuntu 1604 LTS 系统全局模式安装为例)
+Install
+*******
 
-Install from PyPI_
-==================
+* 通过 pip_ 安装
 
-使用 pip_ 工具从 PyPI_ 安装
+  使用 pip_ 工具从 PyPI_ 安装
 
-.. code:: shell
+  .. code:: sh
 
-    sudo pip install hesong-ipsc-busnetcli
+    pip install --user hesong-ipsc-busnetcli
 
-Install from code
-=================
+* 从源代码安装
 
-.. code:: shell
+  .. code:: sh
 
-    $ git clone https://bitbucket.org/hesong-opensource/ipsc-bus-client-python.git
-    $ cd ipsc-bus-client-python
-    $ sudo python setup.py install
+    git clone https://bitbucket.org/hesong-opensource/ipsc-bus-client-python.git
+    cd ipsc-bus-client-python
+    python setup.py install
 
 .. _Python: http://www.python.org/
 .. _PyPI: http://pypi.python.org/
