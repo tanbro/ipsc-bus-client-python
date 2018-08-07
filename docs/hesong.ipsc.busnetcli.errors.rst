@@ -1,5 +1,5 @@
-hesong\.ipsc\.busnetcli\.errors module
-======================================
+hesong.ipsc.busnetcli.errors module
+===================================
 
 .. automodule:: hesong.ipsc.busnetcli.errors
     :members:

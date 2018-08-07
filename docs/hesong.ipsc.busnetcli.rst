@@ -1,5 +1,10 @@
-hesong\.ipsc\.busnetcli package
-===============================
+hesong.ipsc.busnetcli package
+=============================
+
+.. automodule:: hesong.ipsc.busnetcli
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Submodules
 ----------
@@ -12,10 +17,3 @@ Submodules
    hesong.ipsc.busnetcli.utils
    hesong.ipsc.busnetcli.version
 
-Module contents
----------------
-
-.. automodule:: hesong.ipsc.busnetcli
-    :members:
-    :undoc-members:
-    :show-inheritance:

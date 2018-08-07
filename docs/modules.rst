@@ -1,5 +1,5 @@
-hesong.ipsc.busnetcli
-=====================
+hesong
+======
 
 .. toctree::
    :maxdepth: 4
