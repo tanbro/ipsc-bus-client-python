@@ -1,5 +1,5 @@
-hesong\.ipsc\.busnetcli\.head module
-====================================
+hesong.ipsc.busnetcli.head module
+=================================
 
 .. automodule:: hesong.ipsc.busnetcli.head
     :members:

@@ -4,11 +4,12 @@ CHANGELOG
 3.2.1
 =====
 
-:Date: 2018-08-06
+:Date: 2018-08-07
 
 Change
 ------
-* 去除 Python3.0-3.3 的支持
+* 去除 Python 3.0-3.3 的支持
+* 重构 SphinxDocs 文档
 
 Fix
 ---
@@ -16,7 +17,7 @@ Fix
 
 Add
 ---
-* Pylint
+* pylintrc 配置文件
 
 Optimize
 --------

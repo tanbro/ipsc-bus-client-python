@@ -6,8 +6,8 @@
 Welcome to hesong-ipsc-busnetcli's documentation!
 #################################################
 
-:Version:     |version|
-:Date:        |today|
+:version: |version|
+:buid at: |today|
 
 .. include:: modules.rst
 
