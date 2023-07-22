@@ -6,10 +6,11 @@ IPSC专用的消息总线客户端的 Python 包装。
 
 ## 说明
 
-这个项目可用于个人学习：
+这个项目可用于学习：
 
 1. 如何编写一个使用 ctypes 调用原生代码的 Python Library
 1. 如何使用 setuptools 构建 Python Package 项目
+1. 较为复杂的 decorator 怎么编写和使用
 
 版权和许可信息详见 [LICENSE](LICENSE.txt) 文件
 
