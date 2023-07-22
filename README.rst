@@ -33,6 +33,17 @@ Install
     cd ipsc-bus-client-python
     python setup.py install
 
+说明
+******
+
+这个项目可用于个人学习：
+
+#. 如何编写一个 ctype Library
+#. 如何使用 CMake
+
+版权和许可信息详见 [LICENSE](LICENSE.txt) 文件
+
+
 .. _Python: http://www.python.org/
 .. _PyPI: http://pypi.python.org/
 .. _pip: http://pip.pypa.io/
